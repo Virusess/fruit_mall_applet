@@ -7,7 +7,7 @@ use app\lib\exception\BannerMissException;
 class Banner
 {
     /*
-     * 获取轮播图
+     * 获取轮播图(首页)
      * @url /banner/:id
      * @http GET
      * @id banner的id
@@ -20,6 +20,7 @@ class Banner
            throw new BannerMissException();
        }
        return $banner;
+
 
 
    }

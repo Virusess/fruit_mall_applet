@@ -10,10 +10,20 @@ namespace app\api\model;
 
 
 use think\Exception;
-use think\Model;
+use app\api\model\Base;
 
-class Image extends Model
+
+class Image extends Base
 {
     protected $hidden = ['id','from','update_time','delete_time'];
+
+       /*
+        * 调用父类prefixImgUrl
+        * @return  $finalUrl 不拼接路径时为网络图片，拼接路径时为加载本地图片
+        * */
+    public function getUrlAttr($value,$data)
+    {
+         return $this->prefixImgUrl($value,$data);
+    }
 
 }
