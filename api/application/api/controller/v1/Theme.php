@@ -27,7 +27,7 @@ class Theme
         (new IDCollection())->goCheck();
         $ids = explode(',',$ids);
         $theme = ThemeModel::with("topicImg,headImg")->select($ids);
-        if(!$theme){
+        if($theme->isEmpty()){
               throw new ThemeException();
         }
 

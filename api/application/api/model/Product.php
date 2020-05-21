@@ -37,4 +37,19 @@ class Product extends Base
      }
 
 
+    /*
+    *
+    * @function getAllInCategory
+    * @http GET
+    * @categoryID 分类ID
+    * return products json
+    * */
+
+    public static function getProductsByCategoryID($categoryID)
+    {
+        $products = self::where('category_id','=',$categoryID)->select();
+        return $products;
+    }
+
+
 }

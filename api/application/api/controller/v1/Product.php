@@ -10,6 +10,7 @@ namespace app\api\controller\v1;
 
 use app\api\validate\Count;
 use app\api\model\Product as ProductModel;
+use app\api\validate\IDMustBePostiveInt;
 use app\lib\exception\ProductException;
 
 
@@ -25,13 +26,35 @@ class Product
     {
         (new Count())->goCheck();
         $products =ProductModel::getMostRecent($count);
-        if(!$products){
+        if($products->isEmpty()){
              throw new ProductException();
         }
 
         $collect = collection($products);
         $products = $collect->hidden(['summary']);
         return $products;
+
+    }
+
+
+    /*
+    * 根据分类ID获取商品(产品页)
+    * @url /product/by_category
+    * @http GET
+    * @id 分类id
+    * */
+    public function getAllInCategory($id)
+    {
+        (new IDMustBePostiveInt())->goCheck();
+        $products = ProductModel::getProductsByCategoryID($id);
+        if($products->isEmpty()){
+            throw new ProductException();
+        }
+
+        $products = $products->hidden(['summary']);
+        return $products;
+
+
 
     }
 
