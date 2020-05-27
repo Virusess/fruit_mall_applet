@@ -54,8 +54,6 @@ class Product
         $products = $products->hidden(['summary']);
         return $products;
 
-
-
     }
 
 
