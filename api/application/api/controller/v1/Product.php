@@ -57,4 +57,23 @@ class Product
     }
 
 
+    /*
+   * 根据产品ID获取商品详情(产品详情页)
+   * @url /product/:id
+   * @http GET
+   * @id 产品id
+   * */
+    public function getOne($id)
+    {
+
+        (new IDMustBePostiveInt())->goCheck();
+        $product = ProductModel::getProductDetail($id);
+        if(!$product){
+            throw new ProductException();
+        }
+
+        return $product;
+    }
+
+
 }

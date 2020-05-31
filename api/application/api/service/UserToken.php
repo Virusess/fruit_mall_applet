@@ -9,11 +9,12 @@
 namespace app\api\service;
 
 
+use app\lib\exception\TokenException;
 use app\lib\exception\WechatException;
 use think\Exception;
 use app\api\model\User as UserModel;
 
-class UserToken
+class UserToken extends Token
 {
 
     protected $code;
@@ -21,11 +22,11 @@ class UserToken
     protected $wxAppSecret;
     protected $wxLoginUrl;
 
-    function __construct($code)
+    public function __construct($code)
     {
         $this->code = $code;
         $this->wxAppID = config('wx.app_id');
-        $this->wxAppSecret = config('app_secret');
+        $this->wxAppSecret = config('wx.app_secret');
         $this->wxLoginUrl = sprintf(config('wx.login_url'),$this->wxAppID,$this->wxAppSecret,$this->code);
 
     }
@@ -42,7 +43,7 @@ class UserToken
             if ($loginFail){
                $this->processLoginError($wxResult);
             }else{
-                $this->grantToken($wxResult);
+               return  $this->grantToken($wxResult);
             }
         }
     }
@@ -63,8 +64,12 @@ class UserToken
         if($user){
             $uid = $user->id;
         }else{
-            $uid = $user->newUser($openid);
+            $uid = $this->newUser($openid);
         }
+
+        $cachedValue = $this->prepareCachedValue($wxResult,$uid);
+        $token =  $this->saveToCache($cachedValue);
+        return $token;
 
 
     }
@@ -76,6 +81,31 @@ class UserToken
             'openid'=>$openid
         ]);
         return $user->id;
+    }
+
+    private function saveToCache($cachedValue)
+    {
+        $key = self::generateToken();
+        $value =  json_encode($cachedValue);
+        $expire_in = config('setting.token_expire_in');
+        $request = cache($key,$value,$expire_in);
+        if(!$request){
+            throw new TokenException([
+                'msg'=>'服务器缓存异常',
+                'errorCode'=>10005
+            ]);
+        }
+
+        return $key;
+        
+    }
+
+    private function prepareCachedValue($wxResult,$uid)
+    {
+        $cachedVaule = $wxResult;
+        $cachedVaule['uid'] = $uid;
+        $cachedVaule['scope'] = 16;
+        return $cachedVaule;
     }
 
 

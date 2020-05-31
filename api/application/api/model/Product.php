@@ -15,6 +15,19 @@ class Product extends Base
 
     protected $hidden = ['delete_time','main_img_id','pivot','from','category_id','create_time','update_time'];
 
+
+    /*定义与product_image关系(一对多)*/
+    public function imgs()
+    {
+        return $this->hasMany('ProductImage','product_id','id');
+    }
+
+    /*定义与product_property关系(一对多)*/
+    public function properties()
+    {
+         return $this->hasMany('ProductProperty','product_id','id');
+    }
+
     //调用Base模型的图片读取器
     public function getMainImgUrlAttr($value,$data)
     {
@@ -49,6 +62,21 @@ class Product extends Base
     {
         $products = self::where('category_id','=',$categoryID)->select();
         return $products;
+    }
+
+
+    /*
+   *
+   * @function getOne
+   * @http GET
+   * @id 产品ID
+   * return product json
+   * */
+
+    public static function getProductDetail($id)
+    {
+        $product = self::with('imgs,properties')->find($id);
+        return $product;
     }
 
 
