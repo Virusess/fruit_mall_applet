@@ -22,6 +22,10 @@ Route::get('api/:version/category/all','api/:version.Category/getAllCategories')
 Route::post('api/:version/token/user','api/:version.Token/getToken');
 
 
+//address
+Route::post('api/:version/address','api/:version.Address/createOrUpdateAddress');
+
+
 
 
 //测试路径
@@ -32,5 +36,6 @@ Route::post('api/:version/token/user','api/:version.Token/getToken');
 //http://z.cn/index.php/api/v1/category/all     所有分类
 //http://z.cn/index.php/api/v1/product/by_category/3       根据分类查询产品
 //http://z.cn/index.php/api/v1/token/user       获取token
-//http://z.cn/index.php/api/v1/product/1       获取商品详情
+//http://z.cn/index.php/api/v1/product/11       获取商品详情
+//http://z.cn/index.php/api/v1/address          获取用户地址
 
