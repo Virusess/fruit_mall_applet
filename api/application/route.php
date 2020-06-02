@@ -25,6 +25,9 @@ Route::post('api/:version/token/user','api/:version.Token/getToken');
 //address
 Route::post('api/:version/address','api/:version.Address/createOrUpdateAddress');
 
+//order
+Route::post('api/:version/order','api/:version.Order/placeOrder');
+
 
 
 

@@ -9,6 +9,8 @@
 namespace app\api\service;
 
 
+use app\lib\enum\ScopeEnum;
+use app\lib\exception\ForbiddenException;
 use app\lib\exception\TokenException;
 use think\Cache;
 use think\Exception;
@@ -45,10 +47,7 @@ class Token
     public static function getCurrentTokenVar($key)
     {
         $token = Request::instance()->header('token');
-
-        return $token;
-
-        /*$vars = Cache::get($token);
+        $vars = Cache::get($token);
         if(!$vars){
             throw new TokenException();
         }else{
@@ -61,10 +60,44 @@ class Token
             }else{
                 throw new Exception('尝试获取的Token变量不存在');
             }
-        }*/
+        }
     }
 
 
+    /*
+     * 重构前置权限控制 >=16
+     * */
+    public static function needPrimaryScope()
+    {
+        $scope = self::getCurrentTokenVar("scope");
+        if($scope){
+            if($scope >= ScopeEnum::User){
+                return true;
+            }else{
+                throw new ForbiddenException();
+            }
+        }else{
+            throw new TokenException();
+        }
+    }
+
+    /*
+     * 重构前置权限控制 =16
+     * */
+
+    public static function needExclusiveScope()
+    {
+        $scope = self::getCurrentTokenVar("scope");
+        if($scope){
+            if($scope == ScopeEnum::User){
+                return true;
+            }else{
+                throw new ForbiddenException();
+            }
+        }else{
+            throw new TokenException();
+        }
+    }
 
 
 }
